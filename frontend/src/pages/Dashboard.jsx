@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import UploadBox from '../components/UploadBox';
 import FileProgressCard from '../components/FileProgressCard';
 import DocumentTable from '../components/DocumentTable';
 import NotificationBell from '../components/NotificationBell';
-import api, { uploadSingleFile, fetchDocuments, fetchNotifications, markNotificationAsRead, markAllNotificationsAsRead } from '../services/api';
+import { uploadSingleFile, uploadBulkFiles, fetchDocuments, fetchNotifications, markNotificationAsRead, markAllNotificationsAsRead } from '../services/api';
 import { connectWebSocket } from '../websocket/websocket';
 
 const Dashboard = () => {
@@ -32,8 +32,11 @@ const Dashboard = () => {
     };
 
     useEffect(() => {
-        loadDocuments();
-        loadNotifications();
+        const loadInitialData = async () => {
+            await Promise.all([loadDocuments(), loadNotifications()]);
+        };
+
+        loadInitialData();
 
         const client = connectWebSocket((newNotification) => {
             setNotifications((prev) => [newNotification, ...prev]);
@@ -94,7 +97,7 @@ const Dashboard = () => {
                 // Note: The websocket will handle the success toast for bulk
                 toast.dismiss('bulk-upload');
                 loadDocuments();
-            } catch (error) {
+            } catch {
                 toast.dismiss('bulk-upload');
                 toast.error("Bulk upload failed");
                 setUploadQueue(prev => {
@@ -132,7 +135,7 @@ const Dashboard = () => {
                 ...prev,
                 [file.id]: { ...prev[file.id], progress: 100, status: 'COMPLETE' }
             }));
-        } catch (error) {
+        } catch {
             setUploadQueue(prev => ({
                 ...prev,
                 [file.id]: { ...prev[file.id], status: 'FAILED' }

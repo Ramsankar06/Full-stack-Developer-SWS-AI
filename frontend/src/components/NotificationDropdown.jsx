@@ -1,5 +1,3 @@
-import React from 'react';
-
 const NotificationDropdown = ({ notifications, onMarkAsRead, onMarkAllAsRead }) => {
     const unreadCount = notifications.filter(n => !n.isRead).length;
 

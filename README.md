@@ -1,69 +1,129 @@
 # Document Management Dashboard
 
-A full-stack web application designed for seamless and efficient document management. The application features a clean, responsive React frontend integrated with a robust Spring Boot backend, utilizing a MySQL database for reliable persistence and WebSockets for real-time notifications.
+A full-stack document management dashboard for uploading, tracking, and downloading PDF files. The app includes a React dashboard, Spring Boot REST APIs, MySQL persistence, and WebSocket notifications for bulk uploads.
+
+## Features
+
+- Upload single PDF files with progress tracking
+- Upload multiple PDFs in bulk
+- View uploaded documents in a document library
+- Download stored PDF files
+- Receive real-time bulk upload notifications
+- Responsive React UI built with Tailwind CSS
 
 ## Tech Stack
-- **Frontend**: React, Vite, Tailwind CSS, Axios, React Hot Toast, SockJS, STOMP
-- **Backend**: Spring Boot 3, Spring Web, Spring Data JPA, Spring WebSocket
-- **Database**: MySQL
+
+| Layer | Technology |
+| --- | --- |
+| Frontend | React, Vite, Tailwind CSS, Axios |
+| Notifications | SockJS, STOMP WebSocket |
+| Backend | Spring Boot, Spring Web, Spring Data JPA |
+| Database | MySQL |
+| Build Tools | Maven, npm |
+
+## Project Structure
+
+```text
+document-dashboard/
+├── backend/      # Spring Boot API
+├── frontend/     # React + Vite app
+└── README.md
+```
 
 ## Prerequisites
-- Node.js (v18+)
-- Java JDK 17
-- MySQL Server (v8+)
+
+- Node.js 18 or newer
+- Java JDK 17 or newer
 - Maven
+- MySQL Server
 
-## Database Setup (MySQL)
-1. Ensure MySQL is running on your local machine.
-2. The application will automatically create a database named `document_dashboard` if it does not exist (configured in `application.properties`).
-3. Update `backend/src/main/resources/application.properties` with your MySQL credentials:
-    ```properties
-    spring.datasource.username=root
-    spring.datasource.password=root
-    ```
+## Backend Setup
 
-## Running the Backend (Spring Boot)
-1. Open a terminal and navigate to the `backend` directory.
-2. Run the application using Maven:
-   ```bash
-   cd backend
-   mvnw spring-boot:run
-   ```
-   *The backend will start on port `8080`.*
+1. Make sure MySQL is running.
+2. Check the database credentials in `backend/src/main/resources/application.properties`.
 
-## Running the Frontend (React + Vite)
-1. Open a new terminal and navigate to the `frontend` directory.
-2. Install the necessary dependencies:
-   ```bash
-   cd frontend
-   npm install
-   ```
-3. Start the Vite development server:
-   ```bash
-   npm run dev
-   ```
-   *The frontend will be accessible at `http://localhost:5173`.*
+```properties
+spring.datasource.username=root
+spring.datasource.password=root
+```
 
-## Feature Overview & API Flow
-### 1. Document Upload
-- **Single Upload**: Drag-and-drop or select up to 3 PDFs. Frontend sends individual `POST /api/upload` requests, displaying a real-time progress bar for each file using Axios `onUploadProgress`.
-- **Smart Bulk Upload**: When 4 or more PDFs are selected, a background process is triggered via `POST /api/upload/bulk`. The UI updates to a minimized, collapsible view with an immediate toast indicating background processing.
+3. Start the backend:
 
-### 2. Real-time WebSocket Notifications
-- When a **bulk upload** completes, the backend utilizes Spring's `SimpMessagingTemplate` to broadcast a message to the `/topic/notifications` STOMP endpoint.
-- The frontend, connected via `SockJS` and `@stomp/stompjs`, instantly receives this event, updates the notification bell's unread badge, and triggers a success toast ("X files uploaded successfully").
+```bash
+cd backend
+mvn spring-boot:run
+```
 
-### 3. Document Library
-- Once uploaded, files are saved locally in the `uploads/` directory on the server, and their metadata (name, size, path, timestamp) is persisted in the MySQL `document` table.
-- The frontend fetches and displays this library via `GET /api/documents`, allowing users to download any file via `GET /api/documents/{id}/download`.
+The backend runs on:
 
-## Git Commit Timeline
-The repository was constructed following this progressive commit timeline, reflecting a systematic 15-minute milestone approach:
+```text
+http://localhost:8081
+```
 
-1. `Initialized Spring Boot backend` - Set up Maven project with Spring Web, JPA, WebSocket dependencies.
-2. `Implemented Document, Notification and WebSocket APIs` - Created JPA entities, services, controllers, and STOMP WebSocket configuration.
-3. `Implemented React frontend UI and integrated APIs` - Initialized Vite+React, configured Tailwind CSS, and built UI components (UploadBox, FileProgressCard, DocumentTable, NotificationBell, Dashboard).
-4. `Final polish and added README documentation` - Added this comprehensive project setup and technical overview.
+Important: keep this terminal open while using the app.
 
-## Environment Variables
-The frontend defaults to hitting `http://localhost:8080/api`. If you wish to change this, modify the `baseURL` in `frontend/src/services/api.js` and `WEBSOCKET_URL` in `frontend/src/websocket/websocket.js`.
+## Frontend Setup
+
+Install dependencies:
+
+```bash
+cd frontend
+npm install
+```
+
+Start the frontend:
+
+```bash
+npm run dev
+```
+
+Open the app at:
+
+```text
+http://localhost:5173
+```
+
+## API Endpoints
+
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| `POST` | `/api/upload` | Upload one PDF file using form field `file` |
+| `POST` | `/api/upload/bulk` | Upload multiple PDF files using form field `files` |
+| `GET` | `/api/documents` | List uploaded documents |
+| `GET` | `/api/documents/{id}/download` | Download a document |
+| `GET` | `/api/notifications` | List notifications |
+| `PUT` | `/api/notifications/{id}/read` | Mark one notification as read |
+| `PUT` | `/api/notifications/read-all` | Mark all notifications as read |
+
+## Upload Notes
+
+- Only PDF files are accepted.
+- Uploaded files are stored locally in `backend/uploads/`.
+- Build output, uploaded files, logs, and dependency folders are ignored by Git.
+
+## Build Checks
+
+Run frontend build:
+
+```bash
+cd frontend
+npm run build
+```
+
+Run backend compile:
+
+```bash
+cd backend
+mvn compile
+```
+
+## Troubleshooting
+
+If the backend says the port is already in use, another backend instance is already running. Stop the old Java process or keep using the running instance.
+
+If uploads fail, confirm:
+
+- Backend is running on `http://localhost:8081`
+- Frontend is running on `http://localhost:5173`
+- MySQL is running with the credentials in `application.properties`
+- The selected files are PDFs

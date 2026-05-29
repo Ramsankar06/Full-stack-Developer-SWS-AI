@@ -1,5 +1,3 @@
-import React from 'react';
-
 const FileProgressCard = ({ file, minimized }) => {
     const { name, size, progress, status } = file;
     const sizeInMB = (size / (1024 * 1024)).toFixed(2);

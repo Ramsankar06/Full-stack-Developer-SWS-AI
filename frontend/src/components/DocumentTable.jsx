@@ -1,5 +1,3 @@
-import React from 'react';
-
 const DocumentTable = ({ documents }) => {
     return (
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
@@ -31,7 +29,7 @@ const DocumentTable = ({ documents }) => {
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <a 
-                                    href={`http://localhost:8080/api/documents/${doc.id}/download`} 
+                                    href={`http://localhost:8081/api/documents/${doc.id}/download`} 
                                     className="text-primary-600 hover:text-primary-900"
                                     target="_blank" 
                                     rel="noopener noreferrer"

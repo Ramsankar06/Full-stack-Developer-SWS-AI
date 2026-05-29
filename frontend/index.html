@@ -5,9 +5,29 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>frontend</title>
+    <script>
+      window.global = window.global || window;
+      window.addEventListener('error', (event) => {
+        const root = document.getElementById('root');
+        if (root && root.textContent.includes('Loading DocHub')) {
+          root.innerHTML = '<pre style="white-space:pre-wrap;font-family:Arial,sans-serif;padding:24px;color:#991b1b;background:#fff1f2;min-height:100vh;">Startup error: ' + event.message + '</pre>';
+        }
+      });
+      window.addEventListener('unhandledrejection', (event) => {
+        const root = document.getElementById('root');
+        const message = event.reason && (event.reason.stack || event.reason.message || String(event.reason));
+        if (root && root.textContent.includes('Loading DocHub')) {
+          root.innerHTML = '<pre style="white-space:pre-wrap;font-family:Arial,sans-serif;padding:24px;color:#991b1b;background:#fff1f2;min-height:100vh;">Startup promise error: ' + message + '</pre>';
+        }
+      });
+    </script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div style="font-family: Arial, sans-serif; padding: 24px; color: #111827;">
+        Loading DocHub...
+      </div>
+    </div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

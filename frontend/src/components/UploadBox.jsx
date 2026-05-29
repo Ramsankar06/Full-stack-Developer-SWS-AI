@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 
 const UploadBox = ({ onFilesSelected }) => {
     const handleDrop = useCallback((e) => {
