@@ -1,4 +1,4 @@
-package com.dashboard.config;
+package com.dashboard.websocket;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
